@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
+    <script src="https://aframe.io/releases/1.0.4/aframe.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="patternUrl: data/patterns/markers.patt;">
+        <!-- ARマーカーを指定 -->
+        <a-marker type="pattern" url="data/patterns/markers.patt">
+            <!-- ARマーカーに重ねて動画を表示 -->
+            <a-video src="url/to/your/video.mp4" width="1" height="0.5" position="0 0 0"></a-video>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+</html>
