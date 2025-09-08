@@ -16,8 +16,8 @@
     </style>
 
     <!-- A-Frame と AR.js の読み込み -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.2/aframe/build/aframe-ar.js"></script>
 </head>
 
 <body>
@@ -26,11 +26,12 @@
         <a-assets>
             <video id="myVideo" loop="false" src="./video.mp4"> </video>
         </a-assets>
-        <!-- Hiroマーカーが認識されたときに、内部のオブジェクトを表示 -->
-        <a-marker preset="hiro" id="marker">
-            <!-- マーカー上に表示する動画 -->
-            <a-video src="#myVideo" width="1.28" height="2.160" position="0 0 0" rotation="-90 0 0"></a-video>
+        <!-- 読み取り画像が認識されたときに、内部のオブジェクトを表示 -->
+        <a-marker type='pattern' url='./logo.patt' id="marker">
+            <!-- 読み取り画像上に表示する動画 -->
+            <a-video src="#myVideo" width="4" height="3" position="0 0 0" rotation="-90 0 0"></a-video>
         </a-marker>
+
         <!-- カメラの定義 -->
         <a-entity camera></a-entity>
     </a-scene>
