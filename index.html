@@ -1,59 +1,98 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<head>
-    <meta charset="utf-8" />
-    <title>AR動画サンプル</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
+        <title>AR動画再生テスト</title>
 
-        a-scene {
-            height: 100vh;
-        }
-    </style>
+        <!-- ライブラリの読み込み -->
+        <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+        <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
 
-    <!-- A-Frame と AR.js の読み込み -->
-    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.2/aframe/build/aframe-ar.js"></script>
-</head>
+        <script>
+        AFRAME.registerComponent("play-video", {
+            schema: {
+            video: { type: "string" },
+            canstop: { type: "bool" },
+            },
+            init: function () {
+            this.v = document.querySelector(this.data.video);
 
-<body>
-    <!-- a-sceneにarjs属性を追加してARモードに設定 -->
-    <a-scene embedded arjs='sourceType: webcam;'>
+            this.el.setAttribute("class", "cantap");
+            this.el.setAttribute("material", {
+                src: this.v,
+                shader: "chromakey",
+                // colorにはクロマキーの色を指定
+                // color: "",
+                side: "double",
+            });
+
+            this.playing = false;
+            this.playstart = this.playstart.bind(this);
+
+            // ビデオを再生するイベントを設定　
+            // 以下はAR.jsでマーカーが読み込まれた時(markerFound)と
+            // 動画オブジェクトがクリックされた時に再生するように設定している
+            window.addEventListener("markerFound", (event) => {
+                this.playstart();
+            });
+            this.el.addEventListener("click", this.playstart);
+            },
+
+            playstart: function () {
+            if (!this.playing) {
+                this.v.play();
+                this.playing = true;
+            } else if (this.data.canstop) {
+                this.v.pause();
+                this.playing = false;
+            }
+            },
+        });
+        </script>
+    </head>
+
+    <body>
+        <a-scene
+        vr-mode-ui="enabled: false;"
+        renderer="logarithmicDepthBuffer: true; gammaOutput: true;"
+        embedded
+        arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: true;"
+        >
         <a-assets>
-            <video id="myVideo" loop="false" src="./video.mp4"> </video>
+            <video
+            id="myvideo"
+            muted
+            playsinline
+            crossorigin="anonymous"
+            loop="true"
+            src="./video.mp4"
+            ></video>
         </a-assets>
-        <!-- 読み取り画像が認識されたときに、内部のオブジェクトを表示 -->
+
         <a-marker type='pattern' url='./logo.patt' id="marker">
-            <!-- 読み取り画像上に表示する動画 -->
-            <a-video src="#myVideo" width="4" height="3" position="0 0 0" rotation="-90 0 0"></a-video>
+            <a-entity
+            play-video="video: #myvideo; canstop: false;"
+            geometry="primitive: plane;"
+            scale="1 1 1"
+            position="0 0 0"
+            width="4"
+            height="3"
+            ></a-entity>
         </a-marker>
 
-        <!-- カメラの定義 -->
-        <a-entity camera></a-entity>
-    </a-scene>
-</body>
+        <a-light type="ambient" color="#ffffff"></a-light>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const marker = document.getElementById("marker");
-        // a-video の内部の HTMLVideoElement を取得
-        const myVdeo= document.getElementById("myVideo");
-
-        marker.addEventListener("markerFound", function () {
-            // HTMLVideoElement を再生
-            myVdeo.play();
-        });
-
-        marker.addEventListener("markerLost", function () {
-            // HTMLVideoElement を一時停止して先頭に戻す
-            myVdeo.pause();
-            myVdeo.currentTime = 0;
-        });
-    });
-</script>
-
+        <a-entity
+            camera=""
+            position=""
+            rotation=""
+            scale=""
+            visible=""
+        ></a-entity>
+        </a-scene>
+    </body>
 </html>
